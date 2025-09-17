@@ -11,18 +11,12 @@
         </geometry>
           <material>
             <script>
-              <uri>file://home/tyler/fetch_intro_ws/src/fetch_tasks/models/ar_marker_0/materials/textures/MarkerData_0.png</uri>
-              <name>Gazebo/White</name>
+              <uri>model://ar_marker_0/materials/scripts</uri>
+              <uri>model://ar_marker_0/materials/textures</uri>
+              <name>ar_marker_0/Material</name>
             </script>
           </material>
       </visual>
-      <collision name="collision">
-        <geometry>
-          <box>
-            <size>0.01 0.1 0.1</size>
-          </box>
-        </geometry>
-      </collision>
     </link>
   </model>
 </sdf>

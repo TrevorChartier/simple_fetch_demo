@@ -6,7 +6,7 @@ material ar_marker_0/material
     {
       texture_unit
       {
-        texture aruco_marker_0.png
+        texture MarkerData_0.png
       }
     }
   }
