@@ -1,0 +1,13 @@
+material ar_marker_0/material
+{
+  technique
+  {
+    pass
+    {
+      texture_unit
+      {
+        texture aruco_marker_0.png
+      }
+    }
+  }
+}

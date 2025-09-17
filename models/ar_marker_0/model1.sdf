@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+  <model name="ar_marker_0">
+    <static>true</static>
+    <link name="link">
+      <visual name="visual">
+        <geometry>
+          <box>
+            <size>0.01 0.1 0.1</size> <!-- 10cm square -->
+          </box>
+        </geometry>
+          <material>
+            <script>
+              <uri>file://home/tyler/fetch_intro_ws/src/fetch_tasks/models/ar_marker_0/materials/textures/MarkerData_0.png</uri>
+              <name>Gazebo/White</name>
+            </script>
+          </material>
+      </visual>
+      <collision name="collision">
+        <geometry>
+          <box>
+            <size>0.01 0.1 0.1</size>
+          </box>
+        </geometry>
+      </collision>
+    </link>
+  </model>
+</sdf>
+

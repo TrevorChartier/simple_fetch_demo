@@ -1,0 +1,35 @@
+<?xml version="1.0" ?>
+<sdf version="1.6">
+    <model name="ar_marker_0">
+        <static>false</static>
+        <link name="link">
+            <visual name="visual">
+                <geometry>
+                    <box>
+                        <size>0.08 0.05 0.1</size>
+                    </box>
+                </geometry>
+                <material>
+                    <ambient>1 0 0 1</ambient>
+                    <diffuse>1 0 0 1</diffuse>
+                </material>
+            </visual>
+            <collision name="collision">
+                <geometry>
+                    <box>
+                        <size>0.08 0.05 0.1</size>
+                    </box>
+                </geometry>
+            </collision>
+        </link>
+
+        <gazebo>
+            <plugin name="grasp_fix" filename="libgazebo_grasp_fix.so">
+                <arm>gripper_link</arm>
+                <gripper_link>l_gripper_finger_link</gripper_link>
+                <gripper_link>r_gripper_finger_link</gripper_link>
+                <disable_collisions_on_attach>true</disable_collisions_on_attach>
+            </plugin>
+        </gazebo>
+    </model>
+</sdf>
