@@ -1,13 +1,15 @@
-material ar_marker_0/material
+material ar_marker_0/Material
 {
-  technique
-  {
-    pass
+    technique
     {
-      texture_unit
-      {
-        texture MarkerData_0.png
-      }
+        pass
+        {
+            ambient 1 1 1 1
+            diffuse 1 1 1 1
+            texture_unit
+            {
+                texture ar_marker_0.png
+            }
+        }
     }
-  }
 }

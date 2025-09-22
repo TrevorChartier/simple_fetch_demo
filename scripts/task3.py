@@ -1,69 +1,67 @@
 #!/usr/bin/env python
-import rospy
 import sys
-import tf2_ros
-import tf2_geometry_msgs
+import rospy
+from visualization_msgs.msg import Marker
 from moveit_commander import MoveGroupCommander, roscpp_initialize, roscpp_shutdown
 from ar_track_alvar_msgs.msg import AlvarMarkers
 
-def move_to_marker():
-    roscpp_initialize(sys.argv)
-    rospy.init_node("fetch_move_to_marker", anonymous=True)
 
-    # MoveIt setup
-    arm = MoveGroupCommander("arm")
-    arm.set_max_velocity_scaling_factor(0.3)
-    arm.set_max_acceleration_scaling_factor(0.3)
+marker_pub = rospy.Publisher('/visualization_marker', Marker, queue_size=10) # To visualize the detected marker position in RVIZ
 
-    # TF setup
-    tf_buffer = tf2_ros.Buffer()
-    listener = tf2_ros.TransformListener(tf_buffer)
 
-    rospy.loginfo("Waiting for AR markers...")
 
-    rate = rospy.Rate(1)  # 1 Hz
-    while not rospy.is_shutdown():
-        try:
-            # Get detected markers
-            markers_msg = rospy.wait_for_message("/ar_pose_marker", AlvarMarkers, timeout=1.0)
+def visualize_marker(ar_marker):
+    marker = Marker()
+    marker.header.frame_id = ar_marker.header.frame_id
+    marker.header.stamp = rospy.Time.now()
+    marker.ns = "ar_markers"
+    marker.id = ar_marker.id
+    marker.type = Marker.CUBE
+    marker.action = Marker.ADD
+    marker.pose = ar_marker.pose.pose
+    marker.scale.x = 0.05
+    marker.scale.y = 0.05
+    marker.scale.z = 0.05
+    marker.color.a = 1.0
+    marker.color.r = 0.0
+    marker.color.g = 1.0
+    marker.color.b = 0.0
+    marker.lifetime = rospy.Duration()
+    marker_pub.publish(marker)
 
-            if not markers_msg.markers:
-                rospy.logwarn("No AR markers detected yet...")
-                rate.sleep()
-                continue
 
-            # Pick the first marker (or choose by ID)
-            marker_pose_cam = markers_msg.markers[0].pose
+def move_arm(pose):
+    pose.position.x -= 0.11 # Avoid contact with marker
+    arm_group = MoveGroupCommander("arm_with_torso")
+    arm_group.set_pose_target(pose)
+    arm_group.go(wait=True)
+    arm_group.stop()
+    arm_group.clear_pose_targets()
+    rospy.loginfo("Move Successful")
 
-            # Transform marker pose to base_link frame
-            marker_pose_base = tf_buffer.transform(marker_pose_cam, "base_link", rospy.Duration(1.0))
 
-            # Optional: offset along z-axis to hover above marker
-            marker_pose_base.pose.position.z += 0.05
+def move_to_marker(msg):
+    global marker_pub
+    try:
+        for marker in msg.markers:
+            visualize_marker(marker)
+            if marker.id == 0:
+                rospy.loginfo("AR Tag Detected, Attempting Move")
+                move_arm(marker.pose.pose)
+                marker_subscriber.unregister()
+                rospy.loginfo("Unsubscribed From Marker Detection")
+                break
+    except rospy.ROSInterruptException as e:
+        rospy.logerr("ROS Interrupt Exception: %s" % e)
+    except Exception as e:
+        rospy.logerr("General Exception: %s" % e)
 
-            rospy.loginfo("Planning to AR marker...")
-            arm.set_pose_target(marker_pose_base)
-            plan = arm.plan()
-
-            if plan and len(plan.joint_trajectory.points) > 0:
-                rospy.loginfo("Executing plan...")
-                arm.execute(plan, wait=True)
-            else:
-                rospy.logwarn("No valid plan found. Retrying...")
-
-            rate.sleep()
-
-        except (tf2_ros.LookupException, tf2_ros.ExtrapolationException):
-            rospy.logwarn("TF lookup failed, retrying...")
-            rate.sleep()
-        except rospy.ROSException:
-            rospy.logwarn("Waiting for AR marker message...")
-            rate.sleep()
-
-    roscpp_shutdown()
 
 if __name__ == "__main__":
-    try:
-        move_to_marker()
-    except rospy.ROSInterruptException:
-        pass
+    roscpp_initialize(sys.argv)
+    rospy.init_node('ar_tag_pose', anonymous=True)
+    marker_subscriber = rospy.Subscriber('/ar_pose_marker', AlvarMarkers, move_to_marker)
+    rospy.loginfo("Setup Complete, ready for task 3 marker detection.")
+    rospy.sleep(5)
+    rospy.spin()
+    roscpp_shutdown()

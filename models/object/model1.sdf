@@ -1,35 +1,69 @@
 <?xml version="1.0" ?>
 <sdf version="1.6">
-    <model name="ar_marker_0">
-        <static>false</static>
-        <link name="link">
-            <visual name="visual">
-                <geometry>
-                    <box>
-                        <size>0.08 0.05 0.1</size>
-                    </box>
-                </geometry>
-                <material>
-                    <ambient>1 0 0 1</ambient>
-                    <diffuse>1 0 0 1</diffuse>
-                </material>
-            </visual>
-            <collision name="collision">
-                <geometry>
-                    <box>
-                        <size>0.08 0.05 0.1</size>
-                    </box>
-                </geometry>
-            </collision>
-        </link>
+  <model name="ar_marker_0">
+    <static>false</static>
+    <link name="link">
 
-        <gazebo>
-            <plugin name="grasp_fix" filename="libgazebo_grasp_fix.so">
-                <arm>gripper_link</arm>
-                <gripper_link>l_gripper_finger_link</gripper_link>
-                <gripper_link>r_gripper_finger_link</gripper_link>
-                <disable_collisions_on_attach>true</disable_collisions_on_attach>
-            </plugin>
-        </gazebo>
-    </model>
+      <!-- Main box (red) -->
+      <visual name="visual_box">
+        <geometry>
+          <box>
+            <size>0.08 0.05 0.1</size>
+          </box>
+        </geometry>
+            <material>
+                <ambient>0 0 0 1</ambient>
+                <diffuse>0.82 0.71 0.55</diffuse>
+            </material>
+      </visual>
+
+
+      <!-- AR tag plate on +Z face (flat, facing up) -->
+      <visual name="visual_ar_tag">
+        <!-- x y z roll pitch yaw -->
+        <pose>0 0 0.0506 0 -1.5708 0</pose>
+        <geometry>
+          <box>
+            <!-- thickness is along local +X; after rotation local +X -> world +Z -->
+            <size>0.001 0.045 0.045</size>
+          </box>
+        </geometry>
+        <material>
+          <script>
+            <uri>model://ar_marker_0/materials/scripts</uri>
+            <uri>model://ar_marker_0/materials/textures</uri>
+            <name>ar_marker_0/Material</name>
+          </script>
+        </material>
+      </visual>
+
+      <!-- Collision (box only) -->
+    <collision name="collision">
+      <geometry>
+        <box>
+          <size>0.08 0.05 0.1</size>
+        </box>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>10.0</mu>
+            <mu2>10.0</mu2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+
+
+    </link>
+
+    <gazebo>
+      <plugin name="grasp_fix" filename="libgazebo_grasp_fix.so">
+        <arm>gripper_link</arm>
+        <gripper_link>l_gripper_finger_link</gripper_link>
+        <gripper_link>r_gripper_finger_link</gripper_link>
+        <disable_collisions_on_attach>true</disable_collisions_on_attach>
+      </plugin>
+    </gazebo>
+  </model>
 </sdf>
