@@ -2,9 +2,6 @@
   <!-- Set Gazebo model path -->
   <env name="GAZEBO_MODEL_PATH" value="$(optenv GAZEBO_MODEL_PATH):$(env HOME)/fetch_intro_ws/fetch_tasks/models"/>
 
-  <!-- Include the Fetch robot navigation launch file -->
-  <include file="$(find fetch_navigation)/launch/fetch_nav.launch" />
-
   <!-- Load the URDF and SRDF configuration for MoveIt! -->
   <include file="$(find fetch_moveit_config)/launch/planning_context.launch">
     <arg name="load_robot_description" value="true"/>
@@ -21,6 +18,6 @@
   <node pkg="rviz" type="rviz" name="$(anon rviz)" args="-d $(find utility)/config/looking.rviz" />
 
   <!-- Custom Task3 Node -->
-  <node pkg="fetch_tasks" type="task3.py" name="ar_tag_pose" output="screen"/>
+  <node pkg="fetch_tasks" type="task3_april.py" name="ar_tag_pose" output="screen"/>
 
 </launch>

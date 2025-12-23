@@ -1,0 +1,17 @@
+<launch>
+  <node pkg="apriltag_ros" type="apriltag_ros_continuous_node" name="apriltag_node" output="screen">
+    <!-- Camera topics -->
+    <remap from="image_rect" to="/head_camera/rgb/image_raw"/>
+    <remap from="camera_info" to="/head_camera/rgb/camera_info"/>
+    
+    <!-- Tag parameters -->
+    <param name="image_transport" value="raw"/>
+    <param name="camera_frame_id" value="head_camera_rgb_optical_frame"/>
+    <param name="tag_family" value="tag36h11"/>
+    <param name="publish_tf" value="true"/>
+    <param name="standalone_descriptions" value="false"/>
+    <rosparam command="load" file="$(find fetch_tasks)/config/settings.yaml" />
+    <rosparam command="load" file="$(find fetch_tasks)/config/tags.yaml" />
+
+  </node>
+</launch>
